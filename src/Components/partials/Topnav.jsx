@@ -1,14 +1,19 @@
 import axios from "../../utils/axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import noimage from "../../../public/noimage.jpg";
 
 const Topnav = () => {
   const [query, setQuery] = useState("");
   const [searches, setSearches] = useState([]);
+  const inputRef = useRef(null); // 👈 create a ref for input
 
   const GetSearches = async () => {
     try {
+      if (query.trim().length === 0) {
+        setSearches([]);
+        return;
+      }
       const { data } = await axios.get(`search/multi?query=${query}`);
       setSearches(data.results);
     } catch (error) {
@@ -23,44 +28,56 @@ const Topnav = () => {
   return (
     <div className="w-full relative h-[10vh] flex justify-center items-center">
       <div className="w-[62%] flex items-center justify-start">
-        <i className="text-3xl text-zinc-400 ri-search-line"></i>
+        {/* Search Icon */}
+        <i
+          className="text-3xl text-zinc-400 ri-search-line cursor-pointer"
+          onClick={() => inputRef.current?.focus()} // 👈 focus on input
+        ></i>
+
+        {/* Search Input (always visible) */}
         <input
+          ref={inputRef} // 👈 attach ref
           type="text"
           placeholder="search here"
           onChange={(e) => setQuery(e.target.value)}
           value={query}
           className="text-zinc-200 w-[80%] px-5 py-3 mx-10 rounded text-xl bg-transparent"
         />
+
+        {/* Clear Button */}
         {query.length > 0 && (
           <i
             onClick={() => setQuery("")}
-            className="text-3xl text-zinc-400 ri-close-line"
+            className="cursor-pointer text-3xl text-zinc-400 ri-close-line"
           ></i>
         )}
       </div>
 
-      <div className="z-[100] absolute w-[50%] rounded max-h-[50vh] bg-zinc-200 top-[90%] overflow-auto">
-        {searches.map((s, i) => (
-          <Link
-            to={`/${s.media_type}/details/${s.id}`}
-            key={i}
-            className="font-semibold text-zinc-600 w-[100%] px-10 py-5 flex justify-start items-center border-b-2 border-zinc-100 hover:bg-zinc-300 hover:text-black duration-300"
-          >
-            <img
-              className="w-[10vh] h-[10vh] object-cover rounded mr-5"
-              src={
-                s.backdrop_path || s.profile_path
-                  ? `https://image.tmdb.org/t/p/original/${s.backdrop_path || s.profile_path}`
-                  : noimage
-              }
-              alt=""
-            />
-            <span>
-              {s.name || s.original_name || s.original_title || s.title}
-            </span>
-          </Link>
-        ))}
-      </div>
+      {/* Dropdown Results */}
+      {query.length > 0 && (
+        <div className="z-[100] absolute w-[50%] rounded max-h-[50vh] bg-zinc-200 top-[90%] overflow-auto">
+          {searches.map((s, i) => (
+            <Link
+              to={`/${s.media_type}/details/${s.id}`}
+              key={i}
+              className="font-semibold text-zinc-600 w-[100%] px-10 py-5 flex justify-start items-center border-b-2 border-zinc-100 hover:bg-zinc-300 hover:text-black duration-300"
+            >
+              <img
+                className="w-[10vh] h-[10vh] object-cover rounded mr-5"
+                src={
+                  s.backdrop_path || s.profile_path
+                    ? `https://image.tmdb.org/t/p/original/${s.backdrop_path || s.profile_path}`
+                    : noimage
+                }
+                alt=""
+              />
+              <span>
+                {s.name || s.original_name || s.original_title || s.title}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
