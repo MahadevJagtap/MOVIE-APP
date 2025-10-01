@@ -6,7 +6,7 @@ import noimage from "../../../public/noimage.jpg";
 const Topnav = () => {
   const [query, setQuery] = useState("");
   const [searches, setSearches] = useState([]);
-  const inputRef = useRef(null); // 👈 create a ref for input
+  const inputRef = useRef(null);
 
   const GetSearches = async () => {
     try {
@@ -28,15 +28,15 @@ const Topnav = () => {
   return (
     <div className="w-full relative h-[10vh] flex justify-center items-center">
       <div className="w-[62%] flex items-center justify-start">
-        {/* Search Icon */}
+       
         <i
           className="text-3xl text-zinc-400 ri-search-line cursor-pointer"
-          onClick={() => inputRef.current?.focus()} // 👈 focus on input
+          onClick={() => inputRef.current?.focus()} 
         ></i>
 
-        {/* Search Input (always visible) */}
+    
         <input
-          ref={inputRef} // 👈 attach ref
+          ref={inputRef} 
           type="text"
           placeholder="search here"
           onChange={(e) => setQuery(e.target.value)}
@@ -44,7 +44,7 @@ const Topnav = () => {
           className="text-zinc-200 w-[80%] px-5 py-3 mx-10 rounded text-xl bg-transparent"
         />
 
-        {/* Clear Button */}
+      
         {query.length > 0 && (
           <i
             onClick={() => setQuery("")}
@@ -53,7 +53,7 @@ const Topnav = () => {
         )}
       </div>
 
-      {/* Dropdown Results */}
+     
       {query.length > 0 && (
         <div className="z-[100] absolute w-[50%] rounded max-h-[50vh] bg-zinc-200 top-[90%] overflow-auto">
           {searches.map((s, i) => (
